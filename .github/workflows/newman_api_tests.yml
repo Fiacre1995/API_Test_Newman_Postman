@@ -12,20 +12,19 @@ jobs:
 
     steps:
       - name: ⬇️ Cloner le dépôt
-        uses: actions/upload-artifact@v4
+        uses: actions/checkout@v3
 
       - name: 📦 Installer Node.js
-        uses: actions/upload-artifact@v4
-
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: 🧪 Installer Newman et HTML Reporter
-        run: |
-          npm install -g newman newman-reporter-html
+      - name: 🧪 Installer Newman et le reporter HTML
+        run: npm install -g newman newman-reporter-html
 
-      - name: 🚀 Exécuter la collection Postman
+      - name: 🚀 Exécuter les tests API Postman
         run: |
+          mkdir -p newman
           newman run postman/collection.json \
             -e postman/environment.json \
             --reporters cli,html \
