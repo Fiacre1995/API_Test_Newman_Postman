@@ -76,7 +76,10 @@
 							"pm.test(\"Le token est présent\", function () {\r",
 							"  var jsonData = pm.response.json();\r",
 							"  pm.expect(jsonData.accessToken).to.exist;\r",
-							"});"
+							"});\r",
+							"\r",
+							"let json = pm.response.json();\r",
+							"pm.environment.set(\"accessToken\", json.accessToken);"
 						],
 						"type": "text/javascript",
 						"packages": {}
