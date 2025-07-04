@@ -3,26 +3,25 @@ name: Newman API Tests
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
-  api-tests:
+  run-api-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ⬇️ Cloner le dépôt
+      - name: 📥 Cloner le dépôt
         uses: actions/checkout@v3
 
-      - name: 📦 Installer Node.js
+      - name: 🧰 Installer Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: 🧪 Installer Newman et le reporter HTML
-        run: npm install -g newman newman-reporter-html
+      - name: 📦 Installer Newman + HTML Reporter
+        run: |
+          npm install -g newman newman-reporter-html
 
-      - name: 🚀 Exécuter les tests API Postman
+      - name: 🚀 Exécuter la collection Postman
         run: |
           mkdir -p newman
           newman run postman/collection.json \
@@ -30,8 +29,8 @@ jobs:
             --reporters cli,html \
             --reporter-html-export newman/report.html
 
-      - name: 📎 Sauvegarder le rapport HTML
+      - name: 📎 Uploader le rapport HTML avec 
         uses: actions/upload-artifact@v4
         with:
           name: rapport-api-tests
-          path: newman/report.html
+          path: newman/report.html   
