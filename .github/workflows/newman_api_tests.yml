@@ -32,7 +32,7 @@ jobs:
             --reporter-html-export newman/report.html
 
       - name: 📎 Sauvegarder le rapport HTML
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rapport-api-tests
           path: newman/report.html
