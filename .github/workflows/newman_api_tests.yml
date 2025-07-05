@@ -25,12 +25,12 @@ jobs:
         run: |
           mkdir -p newman
           newman run postman/collection.json \
-            -e postman/environnement.json \
+            -e postman/environment.json \
             --reporters cli,html \
-            --reporter-html-export rapports/rapport.html 
+            --reporter-html-export newman/report.html 
 
       - name: 📎 Uploader le rapport HTML avec 
         uses: actions/upload-artifact@v4
         with:
           name: rapport-api-tests
-          path: rapports/rapport.html 
+          path: newman/report.html 
