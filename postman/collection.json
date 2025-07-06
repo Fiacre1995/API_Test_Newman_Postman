@@ -4,11 +4,115 @@
 		"name": "Cllection_Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26208054",
-		"_collection_link": "https://restless-robot-924502.postman.co/workspace/dac762f1-592f-493f-9dd8-e0291fa8e1dd/collection/26208054-c7acca8b-54f2-45b1-9fc9-3da85b052c8d?action=share&source=collection_link&creator=26208054"
+		"_collection_link": "https://restless-robot-924502.postman.co/workspace/Test~dac762f1-592f-493f-9dd8-e0291fa8e1dd/collection/26208054-c7acca8b-54f2-45b1-9fc9-3da85b052c8d?action=share&source=collection_link&creator=26208054"
 	},
 	"item": [
 		{
-			"name": "ListeBooks",
+			"name": "Token",
+			"item": [
+				{
+					"name": "Généré Token",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const randomNumber = Math.floor(Math.random() * 1000000) + 1;\r",
+									"pm.environment.set(\"randomNumber\", randomNumber);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Vérifier que le statut est 201\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"//Vérifier la présence du token\r",
+									"pm.test(\"Le token est présent\", function () {\r",
+									"  var jsonData = pm.response.json();\r",
+									"  pm.expect(jsonData.accessToken).to.exist;\r",
+									"});\r",
+									"\r",
+									"//Vérifier qu'il correspond au format attendu\r",
+									"const schema = {\r",
+									"    \"definitions\": {\r",
+									"        \"Welcome\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"additionalProperties\": false,\r",
+									"            \"properties\": {\r",
+									"                \"accessToken\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                }\r",
+									"            },\r",
+									"            \"required\": [\r",
+									"                \"accessToken\"\r",
+									"            ],\r",
+									"            \"title\": \"Welcome\"\r",
+									"        }\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Vérifier que la réponse rétourné est au bon format\", function () {\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									"//Stocker le token dans une variable \r",
+									"let json = pm.response.json();\r",
+									"pm.environment.set(\"accessToken\", json.accessToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"clientName\": \"test{{randomNumber}}\",\r\n    \"clientEmail\": \"test{{randomNumber}}@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://simple-books-api.glitch.me/api-clients/",
+							"protocol": "https",
+							"host": [
+								"simple-books-api",
+								"glitch",
+								"me"
+							],
+							"path": [
+								"api-clients",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Liste Books",
 			"event": [
 				{
 					"listen": "test",
@@ -93,47 +197,59 @@
 			"response": []
 		},
 		{
-			"name": "Généré Token",
+			"name": "Un Book",
 			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"const randomNumber = Math.floor(Math.random() * 1000000) + 1;\r",
-							"pm.environment.set(\"randomNumber\", randomNumber);"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				},
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"// Vérifier que le statut est 201\r",
-							"pm.test(\"Status code is 201\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
+							"// Vérifier que le statut est 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							"\r",
-							"//Vérifier la présence du token\r",
-							"pm.test(\"Le token est présent\", function () {\r",
-							"  var jsonData = pm.response.json();\r",
-							"  pm.expect(jsonData.accessToken).to.exist;\r",
-							"});\r",
 							"\r",
-							"//Vérifier qu'il correspond au format attendu\r",
 							"const schema = {\r",
 							"    \"definitions\": {\r",
 							"        \"Welcome\": {\r",
 							"            \"type\": \"object\",\r",
 							"            \"additionalProperties\": false,\r",
 							"            \"properties\": {\r",
-							"                \"accessToken\": {\r",
+							"                \"id\": {\r",
+							"                    \"type\": \"integer\"\r",
+							"                },\r",
+							"                \"name\": {\r",
 							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"author\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"isbn\": {\r",
+							"                    \"type\": \"string\",\r",
+							"                    \"format\": \"integer\"\r",
+							"                },\r",
+							"                \"type\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"price\": {\r",
+							"                    \"type\": \"number\"\r",
+							"                },\r",
+							"                \"current-stock\": {\r",
+							"                    \"type\": \"integer\"\r",
+							"                },\r",
+							"                \"available\": {\r",
+							"                    \"type\": \"boolean\"\r",
 							"                }\r",
 							"            },\r",
 							"            \"required\": [\r",
-							"                \"accessToken\"\r",
+							"                \"author\",\r",
+							"                \"available\",\r",
+							"                \"current-stock\",\r",
+							"                \"id\",\r",
+							"                \"isbn\",\r",
+							"                \"name\",\r",
+							"                \"price\",\r",
+							"                \"type\"\r",
 							"            ],\r",
 							"            \"title\": \"Welcome\"\r",
 							"        }\r",
@@ -143,10 +259,94 @@
 							"pm.test(\"Vérifier que la réponse rétourné est au bon format\", function () {\r",
 							"    pm.response.to.have.jsonSchema(schema);\r",
 							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_base}}books/:BookId",
+					"host": [
+						"{{url_base}}books"
+					],
+					"path": [
+						":BookId"
+					],
+					"variable": [
+						{
+							"key": "BookId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Passer une commande : Non Authorisé (401)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Vérifier que le statut est 201\r",
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
 							"\r",
-							"//Stocker le token dans une variable \r",
-							"let json = pm.response.json();\r",
-							"pm.environment.set(\"accessToken\", json.accessToken);"
+							"\r",
+							"//Vérifier qu'il correspond au format attendu\r",
+							"const schema = {\r",
+							"    \"$ref\": \"#/definitions/Welcome\",\r",
+							"    \"definitions\": {\r",
+							"        \"Welcome\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"additionalProperties\": false,\r",
+							"            \"properties\": {\r",
+							"                \"error\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                }\r",
+							"            },\r",
+							"            \"required\": [\r",
+							"                \"error\"\r",
+							"            ],\r",
+							"            \"title\": \"Welcome\"\r",
+							"        }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"\r",
+							"pm.test(\"Vérifier que la réponse rétourné est au bon format\", function () {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -160,7 +360,12 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "",
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
 						"value": "",
 						"type": "text",
 						"disabled": true
@@ -168,7 +373,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"clientName\": \"test{{randomNumber}}\",\r\n    \"clientEmail\": \"test{{randomNumber}}@gmail.com\"\r\n}",
+					"raw": "{\r\n\"bookId\": 10,\r\n\"customerName\": \"Une si longue lettre\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -176,15 +381,11 @@
 					}
 				},
 				"url": {
-					"raw": "https://simple-books-api.glitch.me/api-clients/",
-					"protocol": "https",
+					"raw": "{{url}}orders/",
 					"host": [
-						"simple-books-api",
-						"glitch",
-						"me"
+						"{{url}}orders"
 					],
 					"path": [
-						"api-clients",
 						""
 					]
 				}
@@ -192,7 +393,96 @@
 			"response": []
 		},
 		{
-			"name": "Passer une commande",
+			"name": "Passer une commande : Bad Request (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Vérifier que le statut est 201\r",
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"//Vérifier qu'il correspond au format attendu\r",
+							"const schema = {\r",
+							"    \"definitions\": {\r",
+							"        \"Welcome\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"additionalProperties\": false,\r",
+							"            \"properties\": {\r",
+							"                \"error\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                }\r",
+							"            },\r",
+							"            \"required\": [\r",
+							"                \"error\"\r",
+							"            ],\r",
+							"            \"title\": \"Welcome\"\r",
+							"        }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Vérifier que la réponse rétourné est au bon format\", function () {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"bookId\": 10\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}orders/",
+					"host": [
+						"{{url}}orders"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Passer une commande (201)",
 			"event": [
 				{
 					"listen": "test",
@@ -229,7 +519,12 @@
 							"\r",
 							"pm.test(\"Vérifier que la réponse rétourné est au bon format\", function () {\r",
 							"    pm.response.to.have.jsonSchema(schema);\r",
-							"});"
+							"});\r",
+							"\r",
+							"\r",
+							"//Stocker le id de la commande créer \r",
+							"let json = pm.response.json();\r",
+							"pm.environment.set(\"id_cree\", json.orderId);"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -285,7 +580,71 @@
 			"response": []
 		},
 		{
-			"name": "Lister les commandes",
+			"name": "Lister les commandes :  Non Authorisé (401)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Vérifier que le statut est 200\r",
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"    \"$ref\": \"#/definitions/Welcome\",\r",
+							"    \"definitions\": {\r",
+							"        \"Welcome\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"additionalProperties\": false,\r",
+							"            \"properties\": {\r",
+							"                \"error\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                }\r",
+							"            },\r",
+							"            \"required\": [\r",
+							"                \"error\"\r",
+							"            ],\r",
+							"            \"title\": \"Welcome\"\r",
+							"        }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"\r",
+							"pm.test(\"Vérifier que la réponse rétourné est au bon format\", function () {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}orders",
+					"host": [
+						"{{url}}orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lister les commandes (200)",
 			"event": [
 				{
 					"listen": "test",
@@ -342,6 +701,17 @@
 							"pm.test(\"Vérifier que la réponse rétourné est au bon format\", function () {\r",
 							"    pm.response.to.have.jsonSchema(schema);\r",
 							"});\r",
+							"\r",
+							"\r",
+							"// Récupérer la réponse sous forme d'objet JS\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"    let taille = response.length;\r",
+							"    console.log(\"Taille de la liste :\", taille);\r",
+							"\r",
+							"    // Stocker la taille dans une variable d'environnement ou globale\r",
+							"    pm.environment.set(\"taille_liste\", taille);\r",
+							"\r",
 							""
 						],
 						"type": "text/javascript",
@@ -365,6 +735,238 @@
 					"raw": "{{url}}orders",
 					"host": [
 						"{{url}}orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Une Commande (200)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Vérifier que le statut est 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"    \"definitions\": {\r",
+							"        \"Welcome\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"additionalProperties\": false,\r",
+							"            \"properties\": {\r",
+							"                \"id\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"bookId\": {\r",
+							"                    \"type\": \"integer\"\r",
+							"                },\r",
+							"                \"customerName\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"createdBy\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"quantity\": {\r",
+							"                    \"type\": \"integer\"\r",
+							"                },\r",
+							"                \"timestamp\": {\r",
+							"                    \"type\": \"integer\"\r",
+							"                }\r",
+							"            },\r",
+							"            \"required\": [\r",
+							"                \"bookId\",\r",
+							"                \"createdBy\",\r",
+							"                \"customerName\",\r",
+							"                \"id\",\r",
+							"                \"quantity\",\r",
+							"                \"timestamp\"\r",
+							"            ],\r",
+							"            \"title\": \"Welcome\"\r",
+							"        }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"\r",
+							"pm.test(\"Vérifier que la réponse rétourné est au bon format\", function () {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"packages": {},
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}orders/:CommandeId",
+					"host": [
+						"{{url}}orders"
+					],
+					"path": [
+						":CommandeId"
+					],
+					"variable": [
+						{
+							"key": "CommandeId",
+							"value": "{{id_cree}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modifier Commande (204)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Vérifier que le statut est 200\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"customerName\": \"Les aventures de Tope l'Arreigné\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}orders/:CommandeId",
+					"host": [
+						"{{url}}orders"
+					],
+					"path": [
+						":CommandeId"
+					],
+					"variable": [
+						{
+							"key": "CommandeId",
+							"value": "{{id_cree}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Supprimer Commande (204)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Vérifier que le statut est 200\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"customerName\": \"Les aventures de Tope l'Arreigné\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}orders/:CommandeId",
+					"host": [
+						"{{url}}orders"
+					],
+					"path": [
+						":CommandeId"
+					],
+					"variable": [
+						{
+							"key": "CommandeId",
+							"value": "{{id_cree}}"
+						}
 					]
 				}
 			},
